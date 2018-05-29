@@ -45,9 +45,6 @@ find_path(CURSES_INCLUDE_PATH
   HINTS "${_cursesParentDir}/include"
   )
 
-# Need to provide the *_LIBRARIES
-set(CURSES_LIBRARIES ${CURSES_LIBRARY})
-
 # Previous versions of FindCurses provided these values.
 if(NOT DEFINED CURSES_CURSES_H_PATH)
   set(CURSES_CURSES_H_PATH "${CURSES_INCLUDE_PATH}")
@@ -67,6 +64,9 @@ endif()
 # Provide the *_INCLUDE_DIRS result.
 set(CURSES_INCLUDE_DIRS ${CURSES_INCLUDE_PATH})
 set(CURSES_INCLUDE_DIR ${CURSES_INCLUDE_PATH}) # compatibility
+
+# Need to provide the *_LIBRARIES
+set(CURSES_LIBRARIES ${CURSES_LIBRARY})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(PDCurses DEFAULT_MSG
