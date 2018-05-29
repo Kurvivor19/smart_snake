@@ -9,5 +9,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
   )
 
 find_package(PDCurses REQUIRED)
+find_package(Glib REQUIRED)
 
 add_subdirectory(src)
