@@ -11,8 +11,13 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 
 if(CMAKE_HOST_WIN32)
   find_package(PDCurses REQUIRED)
+  set(EXTRA_TARGETS)
 else(CMAKE_HOST_WIN32)
   find_package(Curses REQUIRED)
+  set(CMAKE_THREAD_PREFER_PTHREAD ON)
+  set(THREADS_PREFER_PTHREAD_FLAG ON)
+  find_package(Threads REQUIRED)
+  set(EXTRA_LIBS Threads::Threads rt)
 endif(CMAKE_HOST_WIN32)
 
 find_package(Glib REQUIRED)
