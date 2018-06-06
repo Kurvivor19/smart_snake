@@ -45,6 +45,7 @@ bool check_bite(struct snake_data* psnake, int code_step) {
 
 void create_map(struct map* pmap, int w, int h)
 {
+    // no checking for data here
     pmap->width = w;
     pmap->height = h;
     pmap->snake.head_x = rand() % w;
@@ -52,4 +53,13 @@ void create_map(struct map* pmap, int w, int h)
     born(&(pmap->snake), pmap->snake.head_x, pmap->snake.head_y, w * h);
     pmap->seed_x = rand() % w;
     pmap->seed_y = rand() % h;
+}
+
+void clear_map(struct map* pmap)
+{
+    if(NULL == pmap)
+        return;
+
+    free(pmap->snake.x);
+    free(pmap->snake.y);    
 }

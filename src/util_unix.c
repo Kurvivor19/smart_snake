@@ -30,8 +30,8 @@ bool init_timer()
     if(!res)
     {
         struct sigevent timer_event = {
-            SIGEV_THREAD,
-            .sigev_notify_function=&timer_notify
+            .sigev_notify = SIGEV_THREAD,
+            .sigev_notify_function = &timer_notify
         };
         res = timer_create(CLOCK_REALTIME, &timer_event, &the_timer);
     }
@@ -41,7 +41,7 @@ bool init_timer()
 bool clear_timer()
 {
     int res = 0;
-    res = res || timer_delete(&the_timer);
+    res = res || timer_delete(the_timer);
     res = res || pthread_mutex_destroy(&timer_flag_lock);
     res = res || pthread_cond_destroy(&timer_went_off);
     return 0 == res;

@@ -103,6 +103,11 @@ void seed_left(struct map* pmap)
         pmap->seed_x--;
 }
 
+int cur_idx(struct map* pmap, int offset)
+{
+    return (pmap->code_step + offset) % pmap->snake.buffer_size;
+}
+
 bool dir_up(struct map* pmap)
 {
     if(NULL == pmap)
@@ -110,8 +115,8 @@ bool dir_up(struct map* pmap)
 
     if (pmap->snake.head_y != 0)
     {
-        pmap->snake.x[pmap->code_step] = pmap->snake.head_x;
-        pmap->snake.y[pmap->code_step] = pmap->snake.head_y;
+        pmap->snake.x[cur_idx(pmap, 0)] = pmap->snake.head_x;
+        pmap->snake.y[cur_idx(pmap, 0)] = pmap->snake.head_y;
         pmap->snake.head_y--;
         return true;
     }
@@ -128,8 +133,8 @@ bool dir_down(struct map* pmap)
 
     if (pmap->snake.head_y != pmap->height - 1)
     {
-        pmap->snake.x[pmap->code_step] = pmap->snake.head_x;
-        pmap->snake.y[pmap->code_step] = pmap->snake.head_y;
+        pmap->snake.x[cur_idx(pmap, 0)] = pmap->snake.head_x;
+        pmap->snake.y[cur_idx(pmap, 0)] = pmap->snake.head_y;
         pmap->snake.head_y++;
         return true;
     }
@@ -146,8 +151,8 @@ bool dir_right(struct map* pmap)
 
     if (pmap->snake.head_x != pmap->width - 1)
     {
-        pmap->snake.x[pmap->code_step] = pmap->snake.head_x;
-        pmap->snake.y[pmap->code_step] = pmap->snake.head_y;
+        pmap->snake.x[cur_idx(pmap, 0)] = pmap->snake.head_x;
+        pmap->snake.y[cur_idx(pmap, 0)] = pmap->snake.head_y;
         pmap->snake.head_x++;
         return true;
     }
@@ -164,8 +169,8 @@ bool dir_left(struct map* pmap)
 
     if (pmap->snake.head_x != 0)
     {
-        pmap->snake.x[pmap->code_step] = pmap->snake.head_x;
-        pmap->snake.y[pmap->code_step] = pmap->snake.head_y;
+        pmap->snake.x[cur_idx(pmap, 0)] = pmap->snake.head_x;
+        pmap->snake.y[cur_idx(pmap, 0)] = pmap->snake.head_y;
         pmap->snake.head_x--;
         return true;
     }

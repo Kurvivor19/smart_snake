@@ -12,6 +12,8 @@ void seed_right(struct map* pmap);
 void seed_down(struct map* pmap);
 void seed_left(struct map* pmap);
 
+int cur_idx(struct map* pmap, int offset);
+
 bool dir_up(struct map* pmap);
 bool dir_down(struct map* pmap);
 bool dir_right(struct map* pmap);
