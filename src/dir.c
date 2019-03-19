@@ -4,28 +4,27 @@
 
 #include "dir.h"
 
-bool check_snake(char *display, struct map* pmap)
+bool check_seed(struct snake_data* psnake, int code_step, int sx, int sy)
 {
-    //int offset = pmap->seed_x*(pmap->width + 1) + pmap->seed_y;
-    //int offset =  (pmap->seed_x + 1) + pmap->seed_y;
-    int offset = ((pmap->width + 1) * pmap->seed_y) + pmap->seed_x;
-    if (display[offset] == '0' ||
-        display[offset] == 'o' ||
-        display[offset] == '*')
+    for (int num = 0; psnake->length > num; num++)
     {
-        return false;
+        int idx = (code_step % psnake->buffer_size) - num;
+        if (psnake->x[idx] == sx)
+        {
+            if (psnake->y[idx] == sy)
+            {
+                return false;
+            }
+        }
     }
-    else
-    {
-        return true;
-    }
+    return true;
 }
 
-void recreate_seed(char *display, struct map* pmap)
+void recreate_seed(struct map* pmap)
 {
     pmap->seed_x = rand() % pmap->width;
     pmap->seed_y = rand() % pmap->height;
-    if (check_snake(display, pmap) == false)
+    if (!check_seed(&pmap->snake, pmap->code_step, pmap->seed_x, pmap->seed_y) == false)
     {
         int seed_dir = rand() % 4;
         void(*seed_move)(struct map*);
@@ -47,14 +46,13 @@ void recreate_seed(char *display, struct map* pmap)
             seed_move = &seed_right;
             break;
         }
-        while (check_snake(display, pmap) == false)
+        while (!check_seed(&pmap->snake, pmap->code_step, pmap->seed_x, pmap->seed_y) == false)
         {
             (*seed_move)(pmap);
         }
         //pmap->seed_x = pmap->snake.x[pmap->code_step - pmap->snake.length - 1];
         //pmap->seed_y = pmap->snake.y[pmap->code_step - pmap->snake.length - 1];
     }
-    pmap->snake.length++;// = 3;
 }
 
 void seed_up(struct map* pmap)

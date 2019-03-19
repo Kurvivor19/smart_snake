@@ -13,25 +13,8 @@ void born(struct snake_data* psnake, int x, int y, int max_len)
     psnake->y = (int*)malloc(sizeof(int) * psnake->buffer_size);
 }
 
-//void unmake_nodes(struct node* p)
-//{
-//	struct node* temp;
-//	if (p == 0)
-//		return;
-//	temp = p->tail;
-//	free(p);
-//	unmake_nodes(temp);
-//}
-
-//void insert_after(struct node* p, int x, int y)
-//{
-//	struct node* temp;
-//	temp = make_node(x, y);
-//	temp->tail = p->tail;
-//	p->tail = temp;
-//}
-
-bool check_bite(struct snake_data* psnake, int code_step) {
+bool check_bite(struct snake_data* psnake, int code_step)
+{
     for (int num = 1; psnake->length > num; num++)
     {
         if (psnake->x[(code_step % psnake->buffer_size) - num] == psnake->head_x) {
@@ -41,7 +24,18 @@ bool check_bite(struct snake_data* psnake, int code_step) {
         }
     }
     return true;
-};
+}
+
+bool check_eat(struct snake_data* Psnake, int x, int y)
+{
+    if (Psnake->head_x == x ||
+        Psnake->head_y == y)
+    {
+        Psnake->length++;
+        return true;
+    }
+    return false;
+}
 
 void create_map(struct map* pmap, int w, int h)
 {

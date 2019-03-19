@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.1) 
 
 set(SOURCES
-  snake.c main.c dir.c config.c)
+  snake.c main.c dir.c config.c game.c)
 
 if(CMAKE_HOST_WIN32)
   list(APPEND SOURCES util_w32.c)

@@ -4,8 +4,8 @@
 #include <stdbool.h>
 #include "snake.h"
 
-bool check_snake(char *display, struct map* pmap);
-void recreate_seed(char *display, struct map* pmap);
+bool check_seed(struct snake_data* psnake, int code_step, int sx, int sy);
+void recreate_seed(struct map* pmap);
 
 void seed_up(struct map* pmap);
 void seed_right(struct map* pmap);

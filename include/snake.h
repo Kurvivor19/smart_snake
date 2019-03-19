@@ -48,8 +48,9 @@ void born(struct snake_data* Psnake, int x, int y, int max_len);
 void create_map(struct map* pmap, int w, int h);
 void clear_map(struct map* pmap);
 
-bool check_snake(char *display, struct map* pmap);
+bool check_seed(struct snake_data* psnake, int code_step, int sx, int sy);
 
 bool check_bite(struct snake_data* Pnake, int code_step);
+bool check_eat(struct snake_data* Pnake, int x, int y);
 
 #endif // _SNAKE_H_

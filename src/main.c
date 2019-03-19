@@ -15,6 +15,12 @@
 void fill_display(char* display, int width, int height);
 void printf_display(char* display, int width, int height);
 void printw_display(char* display, int width, int height, WINDOW *win);
+struct snake_display
+{
+    WINDOW* field;
+    WINDOW* msg;
+    char* display;
+};
 
 void help();
 enum commands get_command(WINDOW* win);
@@ -32,7 +38,8 @@ int main(int arcc, const char*argv[])
     cbreak();
     noecho();
 
-    //halfdelay(1);
+    // TODO: uncomment for movement by timer
+    // halfdelay(1);
 
     WINDOW *win_map = NULL;
     WINDOW *win_message = NULL;
@@ -80,11 +87,11 @@ int main(int arcc, const char*argv[])
         newcom = get_command(win_map);
         if (newcom != cmd_NULL)
             lastcom = newcom;
-        life = life && check_bite(&game.snake, game.code_step);
         if (wait_for_timer_pulse(0))
         {
             game.code_step++;
-            if (life == true) {
+            if (life == true)
+            {
                 switch (lastcom)
                 {
                 case cmd_stop:
@@ -102,6 +109,7 @@ int main(int arcc, const char*argv[])
                     game.snake.dir = lastcom;
                     break;
                 }
+                life = life && check_bite(&game.snake, game.code_step);
 
                 if (game.seed_x == game.snake.head_x)
                 {
@@ -113,7 +121,7 @@ int main(int arcc, const char*argv[])
                             mvwprintw(win_message, 2, 0, "YOU WIN");
                             break;
                         }
-                        recreate_seed(display, &game);
+                        recreate_seed(&game);
                     }
                 }
                 //		display = cursor;
@@ -125,8 +133,9 @@ int main(int arcc, const char*argv[])
                 wrefresh(win_map);
                 wrefresh(win_message);
                 //printf_display(display, width, height);
-            }//if
-            else {
+            }
+            if (life == false)
+            {
                 printw_display(display, width, height, win_map);
                 //printf_display(display, width, height);
                 mvwprintw(win_message, 2, 0, "YOU DEAD");
