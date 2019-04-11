@@ -8,6 +8,7 @@
 #include <curses.h>
 
 #include "snake.h"
+#include "game.h"
 #include "dir.h"
 #include "util.h"
 #include "config.h"
@@ -15,6 +16,7 @@
 void fill_display(char* display, int width, int height);
 void printf_display(char* display, int width, int height);
 void printw_display(char* display, int width, int height, WINDOW *win);
+
 struct snake_display
 {
     WINDOW* field;
@@ -43,6 +45,8 @@ int main(int arcc, const char*argv[])
 
     WINDOW *win_map = NULL;
     WINDOW *win_message = NULL;
+    WINDOW *win_help = NULL;
+    WINDOW *win_console = NULL;
     srand(time(NULL));
     bool life = true;
 
@@ -61,16 +65,20 @@ int main(int arcc, const char*argv[])
     // creating concole windows
     win_map = newwin(height + 2, width + 2, 3, 0);
     win_message = newwin(3, 20, 0, 0);
-	
-    move_func movements[cmd_stop + 1] = {
-        &dir_left,
-        &dir_right,
-        &dir_up,
-        &dir_down,
-        &dir_stop
+    win_help = newwin(15, 20, 2, 0);
+    win_console = newwin(30, 20, 16, 0);
+    
+    struct snake_display display_par = { win_map, win_message, display };
+
+    enum game_states current_state = STATE_PLAY;
+    transition get_next_state[] = {
+        &snake_cycle,
+        &help_cycle,
+        &death_cycle,
+        &win_cycle,
+        &console_cycle
     };
-    enum commands lastcom = cmd_NULL;
-    enum commands newcom;
+	
     mvwprintw(win_message, 0, 0, "%s%i\n", "step-", game.code_step);
     mvwprintw(win_message, 1, 0, "%s%i%s%i", "length-", game.snake.length, " need ", dset.winning_length);
 
@@ -81,69 +89,22 @@ int main(int arcc, const char*argv[])
 
     init_timer();
     setup_timer(dset.timer_msec_interval);
-    while (dset.winning_length > game.snake.length)
+    do
     {
-        //system("cls");
-        newcom = get_command(win_map);
-        if (newcom != cmd_NULL)
-            lastcom = newcom;
-        if (wait_for_timer_pulse(0))
+        void* context = NULL;
+        switch (current_state)
         {
-            game.code_step++;
-            if (life == true)
-            {
-                switch (lastcom)
-                {
-                case cmd_stop:
-                    dir_stop(&game);
-                    game.snake.dir = lastcom;
-                    break;
-
-                case cmd_NULL:
-                    life = (*movements[game.snake.dir])(&game);
-                    // printw_display(display, width, height, win_map);
-                    break;
-
-                default:
-                    life = (*movements[lastcom])(&game);
-                    game.snake.dir = lastcom;
-                    break;
-                }
-                life = life && check_bite(&game.snake, game.code_step);
-
-                if (game.seed_x == game.snake.head_x)
-                {
-                    if (game.seed_y == game.snake.head_y)
-                    {
-                        if (game.snake.length == (width * height) - 1)
-                        {
-                            printw_display(display, width, height, win_map);
-                            mvwprintw(win_message, 2, 0, "YOU WIN");
-                            break;
-                        }
-                        recreate_seed(&game);
-                    }
-                }
-                //		display = cursor;
-                mvwprintw(win_message, 0, 0, "%s%i\n", "step-", game.code_step);
-                mvwprintw(win_message, 1, 0, "%s%i%s%i", "length-", game.snake.length, " need ", dset.winning_length);
-
-                fill_display(display, width, height);
-                printw_display(display, width, height, win_map);
-                wrefresh(win_map);
-                wrefresh(win_message);
-                //printf_display(display, width, height);
-            }
-            if (life == false)
-            {
-                printw_display(display, width, height, win_map);
-                //printf_display(display, width, height);
-                mvwprintw(win_message, 2, 0, "YOU DEAD");
-                break;
-            }
-            lastcom = cmd_NULL;
-        }
-    } // while
+        case STATE_PLAY:
+            context = &display_par;
+            break;
+        case STATE_DEATH:
+        case STATE_HELP:
+        case STATE_WIN:
+            context = win_help;
+            break;
+        };
+        current_state = (*get_next_state[current_state])(&game, &dset, context);
+    } while (current_state != STATE_END);
     wrefresh(win_map);
     wrefresh(win_message);
     // back to breaking to ensure pause
@@ -153,6 +114,8 @@ int main(int arcc, const char*argv[])
     clear_map(&game);
     delwin(win_message);
     delwin(win_map);
+    delwin(win_help);
+    delwin(win_console);
     endwin();
     clear_timer();
     free_config();
@@ -249,13 +212,29 @@ void printf_display(char* display, int width, int height)
 
 void printw_help(WINDOW* win)
 {
+    wclear(win);
     mvwprintw(win, 0, 0, "pause");
     mvwprintw(win, 1, 0, "press w or arrow_up to go up");
     mvwprintw(win, 2, 0, "press a or arrow_left to go left");
     mvwprintw(win, 3, 0, "press s or arrow_down to go down");
     mvwprintw(win, 4, 0, "press d or arrow_right to go right");
     mvwprintw(win, 5, 0, "press any button to continue");
-    wgetch(win);
+}
+
+void printw_death(WINDOW* win, int life, int length)
+{
+    wclear(win);
+    mvwprintw(win, 0, 0, "YOU DIED");
+    mvwprintw(win, 1, 0, "Lived for %d turns", life);
+    mvwprintw(win, 2, 0, "Grown to length %d", length);
+}
+
+void printw_win(WINDOW* win, int life, int length)
+{
+    wclear(win);
+    mvwprintw(win, 0, 0, "YOU HAVE WON");
+    mvwprintw(win, 1, 0, "Lived for %d turns", life);
+    mvwprintw(win, 2, 0, "Grown to length %d", length);
 }
 
 enum commands get_command(WINDOW* win)

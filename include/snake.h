@@ -9,9 +9,11 @@ enum commands
     cmd_up,      //2
     cmd_down,    //3
     cmd_stop,    //4
-    cmd_NULL,    //5
+    cmd_skip,    //5
     cmd_help,    //6
     cmd_pause,   //7
+    cmd_quit,    //8
+    cmd_NULL     //9
 };
 
 enum directions

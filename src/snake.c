@@ -28,7 +28,7 @@ bool check_bite(struct snake_data* psnake, int code_step)
 
 bool check_eat(struct snake_data* Psnake, int x, int y)
 {
-    if (Psnake->head_x == x ||
+    if (Psnake->head_x == x &&
         Psnake->head_y == y)
     {
         Psnake->length++;

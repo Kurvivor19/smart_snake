@@ -27,6 +27,8 @@ void init_config()
         'q',
         ' ',
         'e',
+        'h',
+        0x1B,
         0
     };
     int default_commands[] = {
@@ -38,9 +40,11 @@ void init_config()
         cmd_left,
         cmd_down,
         cmd_right,
-        cmd_help,
-        cmd_NULL,
+        cmd_quit,
+        cmd_skip,
         cmd_stop,
+        cmd_help,
+        cmd_quit,
         0
     };
     global_keyboard_config = g_hash_table_new(&g_direct_hash,
