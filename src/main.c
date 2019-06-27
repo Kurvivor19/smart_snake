@@ -26,6 +26,7 @@ struct snake_display
 
 void help();
 enum commands get_command(WINDOW* win);
+bool init_readline(void);
 struct map game;
 
 int main(int arcc, const char*argv[])
@@ -52,6 +53,7 @@ int main(int arcc, const char*argv[])
 
     init_config();
 
+    init_readline();
     int width = atoi(argv[1]);
     int height = atoi(argv[2]);
     char* display;
@@ -82,6 +84,7 @@ int main(int arcc, const char*argv[])
     mvwprintw(win_message, 0, 0, "%s%i\n", "step-", game.code_step);
     mvwprintw(win_message, 1, 0, "%s%i%s%i", "length-", game.snake.length, " need ", dset.winning_length);
 
+    curs_set(0);
     fill_display(display, width, height);
     printw_display(display, width, height, win_map);
     wrefresh(win_map);

@@ -11,6 +11,8 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
 
 if(CMAKE_HOST_WIN32)
   find_package(PDCurses REQUIRED)
+  find_package(Readline REQURED)
+
   set(EXTRA_TARGETS)
 else(CMAKE_HOST_WIN32)
   find_package(Curses REQUIRED)
