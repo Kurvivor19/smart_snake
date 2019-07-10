@@ -24,7 +24,7 @@ void recreate_seed(struct map* pmap)
 {
     pmap->seed_x = rand() % pmap->width;
     pmap->seed_y = rand() % pmap->height;
-    if (!check_seed(&pmap->snake, pmap->code_step, pmap->seed_x, pmap->seed_y) == false)
+    if (check_seed(&pmap->snake, pmap->code_step, pmap->seed_x, pmap->seed_y) == false)
     {
         int seed_dir = rand() % 4;
         void(*seed_move)(struct map*);
@@ -46,7 +46,7 @@ void recreate_seed(struct map* pmap)
             seed_move = &seed_right;
             break;
         }
-        while (!check_seed(&pmap->snake, pmap->code_step, pmap->seed_x, pmap->seed_y) == false)
+        while (check_seed(&pmap->snake, pmap->code_step, pmap->seed_x, pmap->seed_y) == false)
         {
             (*seed_move)(pmap);
         }
