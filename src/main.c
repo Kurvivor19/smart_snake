@@ -69,8 +69,8 @@ int main(int arcc, const char*argv[])
    win_map = newwin(height + 2, width + 2, 3, 0);
    win_message = newwin(3, 20, 0, 0);
    win_help = newwin(15, 20, 2, 0);
-   win_console = newwin(30, 20, 16, 0);
-   win_console_cmd = newwin(30, 1, 15, 0);
+   win_console = newwin(29, 20, 1, 0);
+   win_console_cmd = newwin(1, 20, 0, 0);
     
    struct snake_display display_par = { win_map, win_message, display };
    struct console_state cons_state;
@@ -78,7 +78,7 @@ int main(int arcc, const char*argv[])
    cons_state.msg_win = win_console;
    cons_state.cmd_win = win_console_cmd;
    
-   enum game_states current_state = STATE_PLAY;
+   enum game_states current_state = STATE_PLAY, prev_state = STATE_PLAY;
    transition get_next_state[] = {
       &snake_cycle,
       &help_cycle,
@@ -115,7 +115,9 @@ int main(int arcc, const char*argv[])
             context = &cons_state;
             break;
       };
-      current_state = (*get_next_state[current_state])(&game, &dset, context);
+      bool state_changed = prev_state != current_state;
+      prev_state = current_state;
+      current_state = (*get_next_state[current_state])(&game, &dset, context, state_changed);
    } while (current_state != STATE_END);
    wrefresh(win_map);
    wrefresh(win_message);

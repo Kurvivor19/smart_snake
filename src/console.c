@@ -110,8 +110,10 @@ static void msg_win_redisplay(bool for_resize)
    if (pl_state == NULL)
       return;
    
-   werase(pl_state->msg_win);
-   mvwaddstr(pl_state->msg_win, 0, 0, pl_state->msg_win_str ? pl_state->msg_win_str : "");
+   // werase(pl_state->msg_win);
+   scrollok(pl_state->msg_win, true);
+   waddstr(pl_state->msg_win, pl_state->msg_win_str ? pl_state->msg_win_str : "");
+   waddch(pl_state->msg_win, '\n');
 
    // We batch window updates when resizing
    if (for_resize)
@@ -172,9 +174,14 @@ static void readline_redisplay(void)
    cmd_win_redisplay(false);
 }
 
-enum game_states console_cycle(struct map* game, dynamic_settings* config, void* context)
+enum game_states console_cycle(struct map* pgame, dynamic_settings* config, void* context, bool redraw_now)
 {
    pl_state = context;
+   if (redraw_now)
+   {
+      cmd_win_redisplay(false);
+      wrefresh(pl_state->msg_win);
+   }
    keypad(pl_state->msg_win, TRUE);
    int symbol = wgetch(pl_state->cmd_win);
    // if things work correctly, this eventually calls got_command

@@ -7,21 +7,27 @@ enum commands get_command(WINDOW* win);
 
 struct snake_display
 {
-    WINDOW* field;
-    WINDOW* msg;
-    char * display;
+    WINDOW *field;
+    WINDOW *msg;
+    char *display;
 };
 
-void fill_display(char* display, int width, int height);
-void printf_display(char* display, int width, int height);
-void printw_display(char* display, int width, int height, WINDOW *win);
-void printw_help(WINDOW* win);
-void printw_death(WINDOW* win, int life, int length);
-void printw_win(WINDOW* win, int life, int length);
+void fill_display(char *display, int width, int height);
+void printf_display(char *display, int width, int height);
+void printw_display(char *display, int width, int height, WINDOW *win);
+void printw_help(WINDOW *win);
+void printw_death(WINDOW *win, int life, int length);
+void printw_win(WINDOW *win, int life, int length);
 
-enum game_states snake_cycle(struct map* pgame, dynamic_settings* config, void* context)
+enum game_states snake_cycle(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now)
 {
-    struct snake_display* snake_win = (struct snake_display*) context;
+    struct snake_display *snake_win = (struct snake_display *) context;
+    if (redraw_now)
+    {
+       werase(snake_win->msg);
+       printw_display(snake_win->display, pgame->width, pgame->height, snake_win->field);
+    }
+
     int newcom = get_command(snake_win->field);
     static move_func movements[cmd_stop + 1] = {
         &dir_left,
@@ -90,9 +96,9 @@ enum game_states snake_cycle(struct map* pgame, dynamic_settings* config, void* 
     return STATE_PLAY;
 }
 
-enum game_states help_cycle(struct map* game, dynamic_settings* config, void* context)
+enum game_states help_cycle(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now)
 {
-    WINDOW* help_window = (WINDOW*) context;
+    WINDOW *help_window = (WINDOW *) context;
     wait_for_timer_pulse(10);
     printw_help(help_window);
     wrefresh(help_window);
@@ -100,9 +106,9 @@ enum game_states help_cycle(struct map* game, dynamic_settings* config, void* co
     return STATE_PLAY;
 }
 
-enum game_states death_cycle(struct map* pgame, dynamic_settings* config, void* context)
+enum game_states death_cycle(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now)
 {
-    WINDOW* help_window = (WINDOW*) context;
+    WINDOW *help_window = (WINDOW *) context;
     wait_for_timer_pulse(10);
     printw_death(help_window, pgame->code_step, pgame->snake.length);
     wrefresh(help_window);
@@ -110,9 +116,9 @@ enum game_states death_cycle(struct map* pgame, dynamic_settings* config, void* 
     return STATE_END;
 }
 
-enum game_states win_cycle(struct map* pgame, dynamic_settings* config, void* context)
+enum game_states win_cycle(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now)
 {
-    WINDOW* help_window = (WINDOW*) context;
+    WINDOW *help_window = (WINDOW *) context;
     wait_for_timer_pulse(10);
     printw_death(help_window, pgame->code_step, pgame->snake.length);
     wrefresh(help_window);

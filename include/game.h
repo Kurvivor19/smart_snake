@@ -14,12 +14,12 @@ enum game_states
     STATE_END
 };
 
-typedef enum game_states (*transition)(struct map* game, dynamic_settings* config, void* context);
+typedef enum game_states (*transition)(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now);
 
-enum game_states snake_cycle(struct map* game, dynamic_settings* config, void* context);
-enum game_states help_cycle(struct map* game, dynamic_settings* config, void* context);
-enum game_states console_cycle(struct map* game, dynamic_settings* config, void* context);
-enum game_states death_cycle(struct map* game, dynamic_settings* config, void* context);
-enum game_states win_cycle(struct map* game, dynamic_settings* config, void* context);
+enum game_states snake_cycle(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now);
+enum game_states help_cycle(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now);
+enum game_states console_cycle(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now);
+enum game_states death_cycle(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now);
+enum game_states win_cycle(struct map *pgame, dynamic_settings *config, void *context, bool redraw_now);
 
 #endif // GAME_H
