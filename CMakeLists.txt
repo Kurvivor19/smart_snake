@@ -2,7 +2,7 @@
 cmake_minimum_required(VERSION 3.1)
 
 project(smart_snake)
-# DESCRIPTION "console snake game powered by Embeddable Common Lisp")
+# DESCRIPTION "console snake game powered by Embeddable Common Lisp"
 
 # Add paths to custom CMake scripts.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
@@ -25,4 +25,6 @@ endif(CMAKE_HOST_WIN32)
 
 find_package(Glib REQUIRED)
 
+link_directories(lisp)
 add_subdirectory(src)
+add_subdirectory(lisp)

@@ -13,6 +13,8 @@ endif(CMAKE_HOST_WIN32)
 add_executable(smart_snake
   ${SOURCES})
 
+add_dependencies(smart_snake build_lisp)
+
 target_include_directories(smart_snake
   PUBLIC "../include"
   ${CURSES_INCLUDE_DIRS}
@@ -24,4 +26,5 @@ target_link_libraries(smart_snake
   ${CURSES_LIBRARIES}
   ${GLIB_LIBRARIES}
   ${READLINE_LIBRARY}
-  ${EXTRA_LIBS})
+  ${EXTRA_LIBS}
+  embedded-console)
