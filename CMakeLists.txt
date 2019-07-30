@@ -24,6 +24,7 @@ else(CMAKE_HOST_WIN32)
 endif(CMAKE_HOST_WIN32)
 
 find_package(Glib REQUIRED)
+find_package(ECL REQUIRED)
 
 link_directories(lisp)
 add_subdirectory(src)

@@ -14,6 +14,7 @@ add_executable(smart_snake
   ${SOURCES})
 
 add_dependencies(smart_snake build_lisp)
+add_definitions(${ECL_DEFINITIONS})
 
 target_include_directories(smart_snake
   PUBLIC "../include"
@@ -27,4 +28,5 @@ target_link_libraries(smart_snake
   ${GLIB_LIBRARIES}
   ${READLINE_LIBRARY}
   ${EXTRA_LIBS}
+  ${ECL_LIBRARIES}
   embedded-console)
