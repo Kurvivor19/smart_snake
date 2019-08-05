@@ -6,6 +6,7 @@
 
 #include <glib.h>
 #include <curses.h>
+#include <ecl/ecl.h>
 
 #include "snake.h"
 #include "game.h"
@@ -29,14 +30,18 @@ void help();
 enum commands get_command(WINDOW* win);
 struct map game;
 
-int main(int arcc, const char*argv[])
+int main(int argc, const char*argv[])
 {
-   if (arcc != 3)
+   if (argc != 3)
    {
       help();
       return 0;
    }
-
+   /* Initialize ECL */
+   ecl_set_option(ECL_OPT_TRAP_SIGSEGV, false);
+   cl_boot(argc, argv);
+   extern void init_lib_EMBEDDED_CONSOLE(cl_object);
+   ecl_init_module(NULL, init_lib_EMBEDDED_CONSOLE);
    initscr();
    cbreak();
    noecho();
@@ -74,7 +79,7 @@ int main(int arcc, const char*argv[])
     
    struct snake_display display_par = { win_map, win_message, display };
    struct console_state cons_state;
-   memset(&cons_state, 0, sizeof(struct console_state));
+   set_initial_console_state(&cons_state);
    cons_state.msg_win = win_console;
    cons_state.cmd_win = win_console_cmd;
    
@@ -135,6 +140,7 @@ int main(int arcc, const char*argv[])
    endwin();
    clear_timer();
    free_config();
+   cl_shutdown();
    return 0;
 }
 

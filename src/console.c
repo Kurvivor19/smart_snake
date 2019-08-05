@@ -9,6 +9,8 @@
 #include <wchar.h>
 #include <wctype.h>
 #include <string.h>
+#include <assert.h>
+#include <ecl/ecl.h>
 #include "game.h"
 #include "console.h"
 
@@ -17,9 +19,19 @@ extern int wcwidth(const wint_t WC);
 
 static struct console_state* pl_state = NULL;
 
+// utility functions
+
+cl_object make_cl_string(const char * pstring)
+{
+    return ecl_make_constant_base_string(pstring, strlen(pstring));
+}
+
 void set_initial_console_state(struct console_state* pstate)
 {
    memset(pstate, 0, sizeof(struct console_state));
+   cl_object fname = make_cl_string("ECHO-STRING");
+   pstate->echo_func = cl_find_symbol(1, fname);
+   assert(ECL_SYMBOLP(pstate->echo_func));
 }
 
 static long max(long l, long r)
@@ -122,6 +134,7 @@ static void msg_win_redisplay(bool for_resize)
       wrefresh(pl_state->msg_win);
 }
 
+
 static void got_command(char *line)
 {
    if (!line)
@@ -133,7 +146,10 @@ static void got_command(char *line)
          add_history(line);
 
       free(pl_state->msg_win_str);
-      pl_state->msg_win_str = line;
+      cl_object call_result = cl_funcall(2, pl_state->echo_func, make_cl_string(line));
+
+      pl_state->msg_win_str = malloc(call_result->string.fillp + 1);
+      memcpy(pl_state->msg_win_str, call_result->string.self, call_result->string.fillp + 1);
       msg_win_redisplay(false);
    }
 }
