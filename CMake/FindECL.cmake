@@ -12,6 +12,10 @@ execute_process(COMMAND ${ECL_CONFIG_VAR} --cflags
 execute_process(COMMAND ${ECL_CONFIG_VAR} --libs
   OUTPUT_VARIABLE ECL_LIBRARIES)
 
+# fix trailing and leading whitespace
+string(REGEX REPLACE "\n$" "" ECL_LIBRARIES "${ECL_LIBRARIES}")
+string(REGEX REPLACE " +$" "" ECL_LIBRARIES "${ECL_LIBRARIES}")
+string(REGEX REPLACE "^ +" "" ECL_LIBRARIES "${ECL_LIBRARIES}")
 
 #find_path(ECL_INCLUDE_DIR ecl/ecl.h
 #          PATH_SUFFIXES libecl)
