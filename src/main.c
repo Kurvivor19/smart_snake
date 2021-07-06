@@ -40,8 +40,11 @@ int main(int argc, const char*argv[])
    /* Initialize ECL */
    ecl_set_option(ECL_OPT_TRAP_SIGSEGV, false);
    cl_boot(argc, argv);
+   extern void init_lib_ASDF(cl_object);
+   ecl_init_module(NULL, init_lib_ASDF);
    extern void init_embedded_console(cl_object);
    ecl_init_module(NULL, init_embedded_console);
+
    initscr();
    cbreak();
    noecho();
