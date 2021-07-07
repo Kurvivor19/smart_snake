@@ -10,6 +10,7 @@
 #include <wctype.h>
 #include <string.h>
 #include <assert.h>
+#include <glib.h>
 #include <ecl/ecl.h>
 #include "game.h"
 #include "console.h"
@@ -29,7 +30,7 @@ cl_object make_cl_string(const char * pstring)
 void set_initial_console_state(struct console_state* pstate)
 {
    memset(pstate, 0, sizeof(struct console_state));
-   cl_object function_name = make_cl_string("ECHO-STRING");
+   cl_object function_name = make_cl_string("READ-STRING");
    cl_object package_name = make_cl_string("EMBEDDED-CONSOLE");
    pstate->work_func = cl_find_symbol(2, function_name, package_name);
    assert(ECL_SYMBOLP(pstate->work_func));
@@ -146,11 +147,27 @@ static void got_command(char *line)
       if (*line)
          add_history(line);
 
-      free(pl_state->msg_win_str);
-      cl_object call_result = cl_funcall(2, pl_state->work_func, make_cl_string(line));
+      if (pl_state->msg_win_str)
+      {
+          g_free(pl_state->msg_win_str);
+          pl_state->msg_win_str = NULL;
+      }
 
-      pl_state->msg_win_str = malloc(call_result->string.fillp + 1);
-      memcpy(pl_state->msg_win_str, call_result->string.self, call_result->string.fillp + 1);
+      cl_env_ptr env = ecl_process_env();
+
+      cl_object call_result = cl_funcall(2, pl_state->work_func, make_cl_string(line));
+      cl_object string_buffer = ecl_nth_value(env, 1);
+
+      assert(ecl_t_of(string_buffer) == t_base_string);
+
+      if (call_result == ECL_NIL)
+      {
+          pl_state->msg_win_str = g_strdup_printf("No object read.\n Buffer contents:\n%s", string_buffer->string.self);
+      }
+      else
+      {
+          pl_state->msg_win_str = g_strdup_printf("An object.\n Buffer remains:\n%s", string_buffer->string.self);
+      }
       msg_win_redisplay(false);
    }
 }

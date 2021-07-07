@@ -243,7 +243,10 @@ void printw_help(WINDOW* win)
    mvwprintw(win, 2, 0, "press a or arrow_left to go left");
    mvwprintw(win, 3, 0, "press s or arrow_down to go down");
    mvwprintw(win, 4, 0, "press d or arrow_right to go right");
-   mvwprintw(win, 5, 0, "press any button to continue");
+   mvwprintw(win, 5, 0, "press space to continue in same direction");
+   mvwprintw(win, 6, 0, "press p to pause and enter console");
+   mvwprintw(win, 7, 0, "press q to quit");
+   mvwprintw(win, 8, 0, "press any button to continue");
 }
 
 void printw_death(WINDOW* win, int life, int length)
