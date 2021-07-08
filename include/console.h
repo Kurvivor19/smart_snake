@@ -15,7 +15,9 @@ struct console_state
     WINDOW* cmd_win;
     char* msg_win_str;
     bool should_exit;
-    cl_object work_func;
+    cl_object read_func;
+    cl_object display_func;
+    cl_object eval_func;
 };
 
 void set_initial_console_state(struct console_state* pstate);

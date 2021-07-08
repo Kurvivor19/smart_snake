@@ -25,3 +25,6 @@
         (values object (coerce (shorten-string *string-buffer*) 'base-string)))
     ((or reader-error end-of-file) (_)
       (values nil (coerce (shorten-string *string-buffer*) 'base-string)))))
+
+(defun to-display-string (o)
+  (coerce (shorten-string (write-to-string o)) 'base-string))

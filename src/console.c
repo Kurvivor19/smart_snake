@@ -32,8 +32,12 @@ void set_initial_console_state(struct console_state* pstate)
    memset(pstate, 0, sizeof(struct console_state));
    cl_object function_name = make_cl_string("READ-STRING");
    cl_object package_name = make_cl_string("EMBEDDED-CONSOLE");
-   pstate->work_func = cl_find_symbol(2, function_name, package_name);
-   assert(ECL_SYMBOLP(pstate->work_func));
+   pstate->read_func = cl_find_symbol(2, function_name, package_name);
+   assert(ECL_SYMBOLP(pstate->read_func));
+   
+   function_name = make_cl_string("TO-DISPLAY-STRING");
+   pstate->display_func = cl_find_symbol(2, function_name, package_name);
+   assert(ECL_SYMBOLP(pstate->display_func));   
 }
 
 static long max(long l, long r)
@@ -154,8 +158,8 @@ static void got_command(char *line)
       }
 
       cl_env_ptr env = ecl_process_env();
-
-      cl_object call_result = cl_funcall(2, pl_state->work_func, make_cl_string(line));
+      // read input into ECL
+      cl_object call_result = cl_funcall(2, pl_state->read_func, make_cl_string(line));
       cl_object string_buffer = ecl_nth_value(env, 1);
 
       assert(ecl_t_of(string_buffer) == t_base_string);
@@ -166,7 +170,9 @@ static void got_command(char *line)
       }
       else
       {
-          pl_state->msg_win_str = g_strdup_printf("An object.\n Buffer remains:\n%s", string_buffer->string.self);
+          // when object is retrieved, show it and process
+          cl_object display_string = cl_funcall(2, pl_state->display_func, call_result);
+          pl_state->msg_win_str = g_strdup_printf("An object: %s.\n Buffer remains:\n%s", display_string->string.self, string_buffer->string.self);
       }
       msg_win_redisplay(false);
    }
